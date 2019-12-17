@@ -5,7 +5,7 @@
 
 网上也有类似的demo实现，但本人觉得具有一定的局限性。比如有的只支持《用户协议》和《隐私政策》两处文字可点击。而我的这个demo则支持添加无限个可点击文本。
 
-使用也简单，把需要点击的文字文字添加到一个数组传给YMAttributeTextView类的clickTextArr属性，再实现clickTextDidClickBlock回调即可。具体可看下面“如何使用”代码。
+使用也简单，把需要点击的文字添加到一个数组传给YMAttributeTextView类的clickTextArr属性，再实现clickTextDidClickBlock回调即可。具体可看下面“如何使用”代码。
 
 # 如何使用
 
