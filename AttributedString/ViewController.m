@@ -21,35 +21,32 @@
 
 @implementation ViewController
 
-#pragma mark ----------------- 初始化UI -----------------
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor whiteColor];
-    self.title = @"用户须知";
+    self.title = @"用户协议";
     
-    // 上半部分是协议描述
-    NSString *desText = @"欢迎您来到超级悟道！超级悟道是每个行业从业人员终身学习与成长的平台，可以通过《超级悟道用户协议》和《超级悟道隐私政策》帮助您了解我们收集、使用、存储和共享个人信息的情况，以及您所享有的相关权利。\n\n请您阅读完整版《超级悟道用户协议》和《超级悟道隐私政策》。\n\n若您同意，请勾选下面“同意”开始接受我们的服务。";
+    [self setupTextViewUI];
+    
+    [self setupYesOrNoUI];
+}
+
+#pragma mark ----------------- 初始化 YMAttributeTextView UI -----------------
+- (void)setupTextViewUI {
+    
     CGFloat onelineStr_H = [@"道" boundingRectWithSize:CGSizeMake(YMScreenWidth-24, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:YMContentSize]} context:nil].size.height;
-    CGFloat desText_H = [desText boundingRectWithSize:CGSizeMake(YMScreenWidth-24, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:YMContentSize]} context:nil].size.height + onelineStr_H;
-    UITextView *desTextView = [[UITextView alloc] initWithFrame:CGRectMake(12, 100, YMScreenWidth-24, desText_H)];
-    desTextView.text = desText;
-    desTextView.font = [UIFont systemFontOfSize:YMContentSize];
-    desTextView.textColor = [UIColor blackColor];
-    desTextView.textAlignment = NSTextAlignmentLeft;
-    desTextView.editable = NO;
-    desTextView.scrollEnabled = NO;
-    [self.view addSubview:desTextView];
-    
-    // 下半部分是协议查看和协议勾选, 为本demo的主要功能部分
     NSString *agreementText = @"    同意《超级悟道用户协议》和《超级悟道隐私政策》";
     CGFloat agreementStr_H = [agreementText boundingRectWithSize:CGSizeMake(YMScreenWidth-24, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:YMContentSize]} context:nil].size.height + onelineStr_H;
-    YMAttributeTextView *agreementTextView = [[YMAttributeTextView alloc] initWithFrame:CGRectMake(12, desTextView.frame.origin.y+desText_H, YMScreenWidth-24, agreementStr_H)];
+    YMAttributeTextView *agreementTextView = [[YMAttributeTextView alloc] initWithFrame:CGRectMake(12, 200, YMScreenWidth-24, agreementStr_H)];
     agreementTextView.clickTextArr = @[@"《超级悟道用户协议》",@"《超级悟道隐私政策》"];
-    agreementTextView.textColor = [UIColor blackColor];
-    agreementTextView.clickTextColor = [UIColor redColor];
+    agreementTextView.textColor = [UIColor grayColor];
+    agreementTextView.clickTextColor = [UIColor blackColor];
     agreementTextView.fontSize = YMContentSize;
-    agreementTextView.isSetUnderline = false;
+    agreementTextView.isSetUnderline = true;
+    agreementTextView.isShowLeftAgreeBtn = NO;
+    agreementTextView.agreeBtnNormalImageName = @"ic_compared_checkbox_normal";
+    agreementTextView.agreeBtnSelectedImageName = @"ic_compared_checkbox_selected";
     agreementTextView.contentText = agreementText;
     [self.view addSubview:agreementTextView];
     __weak typeof(self) weakself = self;
@@ -57,11 +54,15 @@
         NSLog(@"clickText===%@", clickText);
     };
     agreementTextView.agreeBtnClickBlock = ^(UIButton * _Nonnull button) {
-        NSLog(@"clickText===%d", button.selected);
+        NSLog(@"button.selected===%d", button.selected);
         weakself.agreeBtn = button;
     };
+}
+
+#pragma mark ----------------- 初始化底部 "同意" "不同意" 按钮 -----------------
+// 这个不重要
+- (void)setupYesOrNoUI {
     
-    // 底部是同意和不同意的选择
     BOOL isIphoneX = [[UIApplication sharedApplication] statusBarFrame].size.height == 44;
     CGFloat btn_H = isIphoneX?(49.f+34.f) : 49.f;
     UIView *btnBackView = [[UIView alloc] initWithFrame:CGRectMake(0, YMScreenHeight-btn_H, YMScreenWidth, btn_H)];

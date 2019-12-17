@@ -17,6 +17,7 @@
 @property (nonatomic ,assign)CGRect viewframe;
 @property (nonatomic ,weak)UITextView *contentTextView;
 @property (nonatomic ,weak)UIButton *leftAgreeBtn;
+@property (nonatomic ,weak)UIImageView *checkImg;
 
 @end
 
@@ -52,11 +53,14 @@
     UIButton *leftAgreeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.leftAgreeBtn = leftAgreeBtn;
     leftAgreeBtn.frame = CGRectMake(0, 6, 24, 24);
-    [leftAgreeBtn setImage:[UIImage imageNamed:@"icon_address_ic_address_notselected"] forState:UIControlStateNormal];
-    [leftAgreeBtn setImage:[UIImage imageNamed:@"icon_address_ic_address_selected"] forState:UIControlStateSelected];
-    leftAgreeBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self addSubview:leftAgreeBtn];
     [leftAgreeBtn addTarget:self action:@selector(leftAgreeBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    leftAgreeBtn.hidden = YES;
+    [self addSubview:leftAgreeBtn];
+    
+    UIImageView *checkImg = [[UIImageView alloc] initWithFrame:CGRectMake(4, 4, 16, 16)];
+    self.checkImg = checkImg;
+    checkImg.image = [UIImage imageNamed:@""];
+    [leftAgreeBtn addSubview:checkImg];
 }
 
 #pragma mark ----------------- 设置可点击的文字 -----------------
@@ -78,10 +82,13 @@
         if (_isSetUnderline == YES) {
             [attrStr addAttribute:NSUnderlineStyleAttributeName value: [NSNumber numberWithInteger:NSUnderlineStyleSingle] range:clickTextRange]; // 下划线
         }
-        if (_clickTextColor != nil) {
-            // 设置"点击文字"颜色的,好像设置了NSLinkAttributeName属性后, 设置"点击文字"颜色就不生效了
-            [attrStr addAttribute:NSForegroundColorAttributeName value:_clickTextColor range:clickTextRange];
-        }
+        //        if (_clickTextColor != nil) {
+        //            // 设置"点击文字"颜色的, 设置了NSLinkAttributeName属性后, 再设置此属性无效
+        //            [attrStr addAttribute:NSForegroundColorAttributeName value:_clickTextColor range:clickTextRange];
+        //        }
+    }
+    if (_clickTextColor != nil) {
+        self.contentTextView.linkTextAttributes = @{NSForegroundColorAttributeName:_clickTextColor};
     }
     self.contentTextView.attributedText = attrStr;
 }
@@ -102,8 +109,22 @@
     _fontSize = fontSize;
 }
 
+- (void)setAgreeBtnNormalImageName:(NSString *)agreeBtnNormalImageName {
+    _agreeBtnNormalImageName = agreeBtnNormalImageName;
+    self.checkImg.image = [UIImage imageNamed:agreeBtnNormalImageName];
+}
+
+- (void)setAgreeBtnSelectedImageName:(NSString *)agreeBtnSelectedImageName {
+    _agreeBtnSelectedImageName = agreeBtnSelectedImageName;
+}
+
 - (void)setIsSetUnderline:(BOOL)isSetUnderline {
     _isSetUnderline = isSetUnderline;
+}
+
+- (void)setIsShowLeftAgreeBtn:(BOOL)isShowLeftAgreeBtn {
+    _isShowLeftAgreeBtn = isShowLeftAgreeBtn;
+    _leftAgreeBtn.hidden = isShowLeftAgreeBtn;
 }
 
 #pragma mark ----------------- UITextViewDelegate -----------------
@@ -126,7 +147,13 @@
 
 // 按钮点击事件
 - (void)leftAgreeBtnClick:(UIButton *)sender{
+    
     sender.selected = !sender.selected;
+    if (sender.selected) {
+        self.checkImg.image = [UIImage imageNamed:self.agreeBtnSelectedImageName];
+    } else {
+        self.checkImg.image = [UIImage imageNamed:self.agreeBtnNormalImageName];
+    }
     if (self.agreeBtnClickBlock) {
         self.agreeBtnClickBlock(sender);
     }
