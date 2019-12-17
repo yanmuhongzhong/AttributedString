@@ -39,21 +39,21 @@
     NSString *agreementText = @"    同意《超级悟道用户协议》和《超级悟道隐私政策》";
     CGFloat agreementStr_H = [agreementText boundingRectWithSize:CGSizeMake(YMScreenWidth-24, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:YMContentSize]} context:nil].size.height + onelineStr_H;
     YMAttributeTextView *agreementTextView = [[YMAttributeTextView alloc] initWithFrame:CGRectMake(12, 200, YMScreenWidth-24, agreementStr_H)];
-    agreementTextView.clickTextArr = @[@"《超级悟道用户协议》",@"《超级悟道隐私政策》"];
-    agreementTextView.textColor = [UIColor grayColor];
-    agreementTextView.clickTextColor = [UIColor blackColor];
-    agreementTextView.fontSize = YMContentSize;
-    agreementTextView.isSetUnderline = true;
-    agreementTextView.isShowLeftAgreeBtn = NO;
-    agreementTextView.agreeBtnNormalImageName = @"ic_compared_checkbox_normal";
-    agreementTextView.agreeBtnSelectedImageName = @"ic_compared_checkbox_selected";
-    agreementTextView.contentText = agreementText;
+    agreementTextView.clickTextArr = @[@"《超级悟道用户协议》",@"《超级悟道隐私政策》"]; // 设置"需要点击的文字"数组，只需agreementText中包含文字即可
+    agreementTextView.textColor = [UIColor grayColor]; // 设置整体文字颜色
+    agreementTextView.clickTextColor = [UIColor blackColor]; // 设置"需要点击的文字"颜色
+    agreementTextView.fontSize = YMContentSize; // 设置整体文字大小
+    agreementTextView.isSetUnderline = true; // 是否设置"需要点击的文字"下划线
+    agreementTextView.isShowLeftAgreeBtn = NO; // 是否显示文字左侧勾选按钮
+    agreementTextView.agreeBtnNormalImageName = @"ic_compared_checkbox_normal"; // 设置左侧勾选按钮常规状态图片
+    agreementTextView.agreeBtnSelectedImageName = @"ic_compared_checkbox_selected"; // 设置左侧勾选按钮选中状态图片
+    agreementTextView.contentText = agreementText; // 设置文字内容
     [self.view addSubview:agreementTextView];
     __weak typeof(self) weakself = self;
-    agreementTextView.clickTextDidClickBlock = ^(NSString * _Nonnull clickText) {
+    agreementTextView.clickTextDidClickBlock = ^(NSString * _Nonnull clickText) { // "需要点击的文字" 点击回调
         NSLog(@"clickText===%@", clickText);
     };
-    agreementTextView.agreeBtnClickBlock = ^(UIButton * _Nonnull button) {
+    agreementTextView.agreeBtnClickBlock = ^(UIButton * _Nonnull button) { // 左侧勾选按钮选中与否回调
         NSLog(@"button.selected===%d", button.selected);
         weakself.agreeBtn = button;
     };
