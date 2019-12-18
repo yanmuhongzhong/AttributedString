@@ -14,7 +14,6 @@
 
 @interface YMAttributeTextView()<UITextViewDelegate>
 
-@property (nonatomic ,assign)CGRect viewframe;
 @property (nonatomic ,weak)UITextView *contentTextView;
 @property (nonatomic ,weak)UIButton *leftAgreeBtn;
 @property (nonatomic ,weak)UIImageView *checkImg;
@@ -31,7 +30,14 @@
         self = [super initWithFrame:frame];
         if (self) {
             
-            _viewframe = frame;
+            // 设置属性默认值
+            _textColor = [UIColor darkGrayColor];
+            _clickTextColor = [UIColor darkGrayColor];
+            _fontSize = 14;
+            _lineSpacing = 1.5;
+            _isSetUnderline = false;
+            _isShowLeftAgreeBtn = false;
+            
             [self setupUI];
         }
     }
@@ -41,7 +47,7 @@
 - (void)setupUI {
     
     //内容文本
-    UITextView *contentTextView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, _viewframe.size.width, _viewframe.size.height)];
+    UITextView *contentTextView = [[UITextView alloc] initWithFrame:self.bounds];
     self.contentTextView = contentTextView;
     contentTextView.textAlignment = NSTextAlignmentLeft;
     contentTextView.delegate = self;
@@ -68,7 +74,11 @@
 {
     _contentText = contentText;
     
-    NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:_contentText attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:_fontSize],NSForegroundColorAttributeName:_textColor}];
+    // 设置行间距
+    NSMutableParagraphStyle * paragraph = [[NSMutableParagraphStyle alloc] init];
+    paragraph.lineSpacing = self.lineSpacing?self.lineSpacing:2;
+    
+    NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:_contentText attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:_fontSize],NSForegroundColorAttributeName:_textColor,NSParagraphStyleAttributeName:paragraph}];
     
     // 遍历"点击文字"为Link链接, 以及其他需要设置的属性
     for (int i = 0; i < _clickTextArr.count; i++) {
@@ -82,10 +92,10 @@
         if (_isSetUnderline == YES) {
             [attrStr addAttribute:NSUnderlineStyleAttributeName value: [NSNumber numberWithInteger:NSUnderlineStyleSingle] range:clickTextRange]; // 下划线
         }
-        //        if (_clickTextColor != nil) {
-        //            // 设置"点击文字"颜色的, 设置了NSLinkAttributeName属性后, 再设置此属性无效
-        //            [attrStr addAttribute:NSForegroundColorAttributeName value:_clickTextColor range:clickTextRange];
-        //        }
+//        if (_clickTextColor != nil) {
+//            // 设置"点击文字"颜色的, 设置了NSLinkAttributeName属性后, 再设置此属性无效
+//            [attrStr addAttribute:NSForegroundColorAttributeName value:_clickTextColor range:clickTextRange];
+//        }
     }
     if (_clickTextColor != nil) {
         self.contentTextView.linkTextAttributes = @{NSForegroundColorAttributeName:_clickTextColor};
@@ -107,6 +117,10 @@
 
 - (void)setFontSize:(CGFloat)fontSize {
     _fontSize = fontSize;
+}
+
+- (void)setLineSpacing:(CGFloat)lineSpacing {
+    _lineSpacing = lineSpacing;
 }
 
 - (void)setAgreeBtnNormalImageName:(NSString *)agreeBtnNormalImageName {
@@ -147,7 +161,7 @@
 
 // 按钮点击事件
 - (void)leftAgreeBtnClick:(UIButton *)sender{
-    
+    NSLog(@"%d",sender.selected);
     sender.selected = !sender.selected;
     if (sender.selected) {
         self.checkImg.image = [UIImage imageNamed:self.agreeBtnSelectedImageName];

@@ -45,6 +45,7 @@
     agreementTextView.fontSize = YMContentSize; // 设置整体文字大小
     agreementTextView.isSetUnderline = true; // 是否设置"需要点击的文字"下划线
     agreementTextView.isShowLeftAgreeBtn = NO; // 是否显示文字左侧勾选按钮
+    agreementTextView.lineSpacing = 2.0; // 设置行间距
     agreementTextView.agreeBtnNormalImageName = @"ic_compared_checkbox_normal"; // 设置左侧勾选按钮常规状态图片
     agreementTextView.agreeBtnSelectedImageName = @"ic_compared_checkbox_selected"; // 设置左侧勾选按钮选中状态图片
     agreementTextView.contentText = agreementText; // 设置文字内容
