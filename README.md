@@ -19,7 +19,7 @@ agreementTextView.isAddOnlyLastOneLink = NO;
 ```
 ![image](https://note.youdao.com/yws/public/resource/c1637829b631c7615950591b80ce1845/xmlnote/50DE9326BE4C46B0A7C25065564F6CF5/11370) 
 
-使用也简单，把需要点击的文字添加到一个数组传给YMAttributeTextView类的clickTextArr属性，再实现clickTextDidClickBlock回调即可。具体可看下面“如何使用”代码。
+使用也简单，把需要点击的文字添加到一个数组传给YMAttributeTextView类的clickTextArr属性（如有多个重复字段，数组中只需要添加一次），再实现clickTextDidClickBlock回调即可。具体可看下面“如何使用”代码。
 
 # 如何使用
 
