@@ -20,8 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,assign)CGFloat lineSpacing; // 设置行间距 默认值1.5
 @property (nonatomic ,strong)NSString *agreeBtnNormalImageName; // 设置左侧勾选按钮图片
 @property (nonatomic ,strong)NSString *agreeBtnSelectedImageName; // 设置左侧勾选按钮选中图片
-@property (nonatomic ,assign)BOOL isSetUnderline; // 是否设置下划线 默认值false
-@property (nonatomic ,assign)BOOL isShowLeftAgreeBtn; // 是否显示勾选按钮 默认值false
+@property (nonatomic ,assign)BOOL isSetUnderline; // 是否设置下划线 默认值NO
+@property (nonatomic ,assign)BOOL isShowLeftAgreeBtn; // 是否显示勾选按钮 默认值NO
+@property (nonatomic ,assign)BOOL isAddOnlyLastOneLink; // 当内容中"需要点击的文字"有多个重复字段时,是否只添加最后一个字段超链接, 默认值YES
 
 @property(nonatomic, copy) void (^clickTextDidClickBlock)(NSString *clickText); // "需要点击的文字" 点击回调
 @property(nonatomic, copy) void (^agreeBtnClickBlock)(UIButton *button); // 左侧勾选按钮选中与否回调

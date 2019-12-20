@@ -17,6 +17,7 @@
 @property (nonatomic ,weak)UITextView *contentTextView;
 @property (nonatomic ,weak)UIButton *leftAgreeBtn;
 @property (nonatomic ,weak)UIImageView *checkImg;
+@property (nonatomic ,strong)NSMutableArray *lastlyTextArr;
 
 @end
 
@@ -35,8 +36,11 @@
             _clickTextColor = [UIColor darkGrayColor];
             _fontSize = 14;
             _lineSpacing = 1.5;
-            _isSetUnderline = false;
-            _isShowLeftAgreeBtn = false;
+            _isSetUnderline = NO;
+            _isShowLeftAgreeBtn = NO;
+            _isAddOnlyLastOneLink = YES;
+            
+            self.lastlyTextArr = [NSMutableArray array];
             
             [self setupUI];
         }
@@ -78,29 +82,76 @@
     NSMutableParagraphStyle * paragraph = [[NSMutableParagraphStyle alloc] init];
     paragraph.lineSpacing = self.lineSpacing?self.lineSpacing:2;
     
-    NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:_contentText attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:_fontSize],NSForegroundColorAttributeName:_textColor,NSParagraphStyleAttributeName:paragraph}];
+    NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:self.contentText attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.fontSize],NSForegroundColorAttributeName:self.textColor,NSParagraphStyleAttributeName:paragraph}];
     
     // 遍历"点击文字"为Link链接, 以及其他需要设置的属性
-    for (int i = 0; i < _clickTextArr.count; i++) {
+    if (self.isAddOnlyLastOneLink == YES) {
+        [self addOnlyLastOneLink:attrStr];
+    } else {
+        [self addAllLink:attrStr];
+    }
+    if (self.clickTextColor != nil) {
+        self.contentTextView.linkTextAttributes = @{NSForegroundColorAttributeName:self.clickTextColor};
+    }
+    self.contentTextView.attributedText = attrStr;
+}
+
+- (void)addOnlyLastOneLink:(NSMutableAttributedString *)attrStr {
+    
+    for (int i = 0; i < self.clickTextArr.count; i++) {
         
-        NSString *clickText = _clickTextArr[i];
-        NSString *clickText1 = [_contentText componentsSeparatedByString:clickText].lastObject;
+        NSString *clickText = self.clickTextArr[i];
+        NSArray *separatedArr = [self.contentText componentsSeparatedByString:clickText];
+        NSString *unclickText = separatedArr.lastObject;
         NSString *linkValueStr = [NSString stringWithFormat:@"clickText%d://",i];
-        NSRange clickTextRange = NSMakeRange(_contentText.length-clickText1.length-clickText.length, clickText.length);
+        NSUInteger location = self.contentText.length-unclickText.length-clickText.length;
+        NSUInteger length = clickText.length;
+        NSRange clickTextRange = NSMakeRange(location, length);
         
         [attrStr addAttribute:NSLinkAttributeName value:linkValueStr range:clickTextRange]; // 设置"点击文字"为Link链接
-        if (_isSetUnderline == YES) {
+        if (self.isSetUnderline == YES) {
             [attrStr addAttribute:NSUnderlineStyleAttributeName value: [NSNumber numberWithInteger:NSUnderlineStyleSingle] range:clickTextRange]; // 下划线
         }
 //        if (_clickTextColor != nil) {
 //            // 设置"点击文字"颜色的, 设置了NSLinkAttributeName属性后, 再设置此属性无效
 //            [attrStr addAttribute:NSForegroundColorAttributeName value:_clickTextColor range:clickTextRange];
 //        }
+        [self.lastlyTextArr addObject:clickText];
     }
-    if (_clickTextColor != nil) {
-        self.contentTextView.linkTextAttributes = @{NSForegroundColorAttributeName:_clickTextColor};
+}
+
+- (void)addAllLink:(NSMutableAttributedString *)attrStr {
+    
+    int linkTag = 0;
+    for (int i = 0; i < _clickTextArr.count; i++) {
+        NSString *clickText = self.clickTextArr[i];
+        NSArray *separatedArr = [self.contentText componentsSeparatedByString:clickText];
+        int jj = 0;
+        for (int j = (int)separatedArr.count - 2; j >= 0; j--) {
+            NSInteger unclickText_length = 0;
+            for (int k = (int)separatedArr.count - 1; k > j; k--) {
+                NSString *unclickText = separatedArr[k];
+                unclickText_length = unclickText_length + unclickText.length;
+            }
+            NSInteger clickText_length = (int)clickText.length;
+            unclickText_length = (jj+1) * clickText_length + unclickText_length;
+            jj = jj + 1;
+            NSString *linkValueStr = [NSString stringWithFormat:@"clickText%d://",linkTag];
+            linkTag = linkTag+1;
+            NSUInteger location = self.contentText.length-unclickText_length;
+            NSUInteger length = clickText.length;
+            if (location + length > self.contentText.length) {
+                length = 0;
+            }
+            NSRange clickTextRange = NSMakeRange(location, length);
+            
+            [attrStr addAttribute:NSLinkAttributeName value:linkValueStr range:clickTextRange]; // 设置"点击文字"为Link链接
+            if (self.isSetUnderline == YES) {
+                [attrStr addAttribute:NSUnderlineStyleAttributeName value: [NSNumber numberWithInteger:NSUnderlineStyleSingle] range:clickTextRange]; // 下划线
+            }
+            [self.lastlyTextArr addObject:clickText];
+        }
     }
-    self.contentTextView.attributedText = attrStr;
 }
 
 - (void)setClickTextArr:(NSArray *)clickTextArr {
@@ -138,16 +189,19 @@
 
 - (void)setIsShowLeftAgreeBtn:(BOOL)isShowLeftAgreeBtn {
     _isShowLeftAgreeBtn = isShowLeftAgreeBtn;
-    _leftAgreeBtn.hidden = isShowLeftAgreeBtn;
+    self.leftAgreeBtn.hidden = isShowLeftAgreeBtn;
+}
+
+- (void)setIsAddOnlyLastOneLink:(BOOL)isAddOnlyLastOneLink {
+    _isAddOnlyLastOneLink = isAddOnlyLastOneLink;
 }
 
 #pragma mark ----------------- UITextViewDelegate -----------------
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
-    
     // 点击文字触发
     NSString *clickText = [textView.text substringWithRange:characterRange];
-    for (int i = 0; i < _clickTextArr.count; i++) {
-        if ([clickText isEqualToString:_clickTextArr[i]]) {
+    for (int i = 0; i < self.lastlyTextArr.count; i++) {
+        if ([clickText isEqualToString:self.lastlyTextArr[i]]) {
             if ([[URL scheme] isEqualToString:[NSString stringWithFormat:@"clickText%d",i]]) {
                 if (self.clickTextDidClickBlock) {
                     self.clickTextDidClickBlock(clickText);
@@ -161,7 +215,7 @@
 
 // 按钮点击事件
 - (void)leftAgreeBtnClick:(UIButton *)sender{
-    NSLog(@"%d",sender.selected);
+    
     sender.selected = !sender.selected;
     if (sender.selected) {
         self.checkImg.image = [UIImage imageNamed:self.agreeBtnSelectedImageName];

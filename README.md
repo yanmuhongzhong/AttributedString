@@ -5,6 +5,20 @@
 
 网上也有类似的demo实现，但本人觉得具有一定的局限性。比如有的只支持《用户协议》和《隐私政策》两处文字可点击。而我的这个demo则支持添加无限个可点击文本。
 
+当文本中"可点击文本"有多个重复字段时，可选择只添加最后一个字段为超链接，还是所有的字段都添加为超链接。
+
+有多个重复字段时,只添加最后一个字段为超链接:
+```
+agreementTextView.isAddOnlyLastOneLink = YES;
+```
+![image](https://note.youdao.com/yws/public/resource/c1637829b631c7615950591b80ce1845/xmlnote/0621CF9530164E1388882F7C440F9F0A/11368) 
+
+有多个重复字段时, 把所有的字段都添加为超链接:
+```
+agreementTextView.isAddOnlyLastOneLink = NO;
+```
+![image](https://note.youdao.com/yws/public/resource/c1637829b631c7615950591b80ce1845/xmlnote/50DE9326BE4C46B0A7C25065564F6CF5/11370) 
+
 使用也简单，把需要点击的文字添加到一个数组传给YMAttributeTextView类的clickTextArr属性，再实现clickTextDidClickBlock回调即可。具体可看下面“如何使用”代码。
 
 # 如何使用
@@ -22,15 +36,17 @@
 - (void)setupTextViewUI {
     
     CGFloat onelineStr_H = [@"道" boundingRectWithSize:CGSizeMake(YMScreenWidth-24, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:YMContentSize]} context:nil].size.height;
-    NSString *agreementText = @"    同意《超级悟道用户协议》和《超级悟道隐私政策》";
+    NSString *agreementText = @"    同意《用户协议》和《隐私政策》和《用户协议》和《隐私政策》";
     CGFloat agreementStr_H = [agreementText boundingRectWithSize:CGSizeMake(YMScreenWidth-24, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:YMContentSize]} context:nil].size.height + onelineStr_H;
     YMAttributeTextView *agreementTextView = [[YMAttributeTextView alloc] initWithFrame:CGRectMake(12, 200, YMScreenWidth-24, agreementStr_H)];
-    agreementTextView.clickTextArr = @[@"《超级悟道用户协议》",@"《超级悟道隐私政策》"]; // 设置"需要点击的文字"数组，只需agreementText中包含文字即可
+    agreementTextView.clickTextArr = @[@"《用户协议》",@"《隐私政策》"]; // 设置"需要点击的文字"数组，只需agreementText中包含文字即可
     agreementTextView.textColor = [UIColor grayColor]; // 设置整体文字颜色
     agreementTextView.clickTextColor = [UIColor blackColor]; // 设置"需要点击的文字"颜色
     agreementTextView.fontSize = YMContentSize; // 设置整体文字大小
-    agreementTextView.isSetUnderline = true; // 是否设置"需要点击的文字"下划线
+    agreementTextView.isSetUnderline = YES; // 是否设置"需要点击的文字"下划线
     agreementTextView.isShowLeftAgreeBtn = NO; // 是否显示文字左侧勾选按钮
+    agreementTextView.isAddOnlyLastOneLink = NO; // 当内容中"需要点击的文字"有多个重复字段时,是否只添加最后一个字段超链接
+    agreementTextView.lineSpacing = 2.0; // 设置行间距
     agreementTextView.agreeBtnNormalImageName = @"ic_compared_checkbox_normal"; // 设置左侧勾选按钮常规状态图片
     agreementTextView.agreeBtnSelectedImageName = @"ic_compared_checkbox_selected"; // 设置左侧勾选按钮选中状态图片
     agreementTextView.contentText = agreementText; // 设置文字内容
@@ -40,7 +56,7 @@
         NSLog(@"clickText===%@", clickText);
     };
     agreementTextView.agreeBtnClickBlock = ^(UIButton * _Nonnull button) { // 左侧勾选按钮选中与否回调
-        NSLog(@"button.selected===%d", button.selected);
+        NSLog(@"leftAgreeBtn.selected===%d", button.selected);
         weakself.agreeBtn = button;
     };
 }
