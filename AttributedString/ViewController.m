@@ -44,7 +44,7 @@
     agreementTextView.clickTextArr = @[@"《用户协议》",@"《隐私政策》"]; // 设置"需要点击的文字"数组，只需agreementText中包含文字即可
     agreementTextView.textColor = [UIColor grayColor]; // 设置整体文字颜色
     agreementTextView.clickTextColor = [UIColor redColor]; // 设置"需要点击的文字"颜色
-    agreementTextView.fontSize = YMContentSize; // 设置整体文字大小
+    agreementTextView.fontSize = YMContentSize; // 设置整体文字大小  
     agreementTextView.isSetUnderline = YES; // 是否设置"需要点击的文字"下划线
     agreementTextView.isShowLeftAgreeBtn = NO; // 是否显示文字左侧勾选按钮
     agreementTextView.isAddOnlyLastOneLink = NO; // 当内容中"需要点击的文字"有多个重复字段时,是否只添加最后一个字段超链接
