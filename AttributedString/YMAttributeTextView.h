@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,assign)BOOL isAddOnlyLastOneLink; // 当内容中"需要点击的文字"有多个重复字段时,是否只添加最后一个字段超链接, 默认值YES
 
 @property(nonatomic, copy) void (^clickTextDidClickBlock)(NSString *clickText); // "需要点击的文字" 点击回调
-@property(nonatomic, copy) void (^agreeBtnClickBlock)(UIButton *button); // 左侧勾选按钮选中与否回调
+@property(nonatomic, copy) void (^agreeBtnClickBlock)(UIButton *button); // 左侧勾选按钮选中与否点击回调
 
 @end
 
