@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "YMAttributeTextView.h"
+#import  "YMAttributeTextView.h"
 
 #define YMScreenWidth [UIScreen mainScreen].bounds.size.width
 #define YMScreenHeight [UIScreen mainScreen].bounds.size.height
